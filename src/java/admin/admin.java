@@ -22,7 +22,7 @@ public class admin {
      */
     @WebMethod(operationName = "logging")
     public String logging(@WebParam(name = "username") String username, @WebParam(name = "password") String password) {
-        String url = "jdbc:sqlserver://DESKTOP-37MVMA7\\SQLEXPRESS:1433; databaseName=riham;  encrypt=true; trustServerCertificate=true; integratedSecurity=true";
+        String url = "jdbc:sqlserver://DESKTOP-37MVMA7\\SQLEXPRESS:1433; databaseName=details;  encrypt=true; trustServerCertificate=true; integratedSecurity=true";
     Connection con = null;
     PreparedStatement pst = null;
     ResultSet rs = null;
@@ -54,6 +54,38 @@ result = "invalid details";
     return result;
 }
 
+@WebMethod(operationName = "getCustomers")
+public String getCustomers() {
+    String url = "jdbc:sqlserver://DESKTOP-37MVMA7\\SQLEXPRESS:1433; databaseName=details;  encrypt=true; trustServerCertificate=true; integratedSecurity=true";
+    Connection con = null;
+    Statement stmt = null;
+    ResultSet rs = null;
+    StringBuilder result = new StringBuilder();
+
+    try {
+        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        con = DriverManager.getConnection(url);
+        String query = "SELECT * FROM customer ";
+        stmt = con.createStatement();
+        rs = stmt.executeQuery(query);
+        while (rs.next()) {
+            // Append each row of data to the result string
+            result.append("username: ").append(rs.getString("username")).append(", ")
+                  .append("email: ").append(rs.getString("email")).append(", ")
+                  .append("age: ").append(rs.getString("age")).append(", ")
+
+                  .append("password: ").append(rs.getString("password")).append("\n");
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    } finally {
+        try { if (rs != null) rs.close(); } catch (Exception e) { e.printStackTrace(); }
+        try { if (stmt != null) stmt.close(); } catch (Exception e) { e.printStackTrace(); }
+        try { if (con != null) con.close(); } catch (Exception e) { e.printStackTrace(); }
+    }
+    
+    return result.toString();
+}
 
 
 }//end class

@@ -21,36 +21,47 @@ public class customer {
     /**
      * Web service operation
      */
-    @WebMethod(operationName = "register")
-    public String register(@WebParam(name = "fullname") String fullname, @WebParam(name = "email") String email, @WebParam(name = "password") String password) {
-String result = "";
-    
+@WebMethod(operationName = "register")
+public String register(@WebParam(name = "fullname") String fullname, @WebParam(name = "email") String email, @WebParam(name = "age") int age, @WebParam(name = "password") String password) {
+    String result = "";
+
     try {
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        String url = "jdbc:sqlserver://DESKTOP-37MVMA7\\SQLEXPRESS:1433; databaseName=riham;  encrypt=true; trustServerCertificate=true; integratedSecurity=true";
-        try (Connection conn = DriverManager.getConnection(url);
-        
-PreparedStatement prep = conn.prepareStatement("INSERT INTO customer (fullname, email, password) VALUES(?, ?, ?)")) {
-prep.setString(1, fullname);
-prep.setString(2, email);
-prep.setString(3, password);
- int  rows = prep.executeUpdate();
+        String url = "jdbc:sqlserver://DESKTOP-37MVMA7\\SQLEXPRESS:1433; databaseName=details;  encrypt=true; trustServerCertificate=true; integratedSecurity=true";
+        Connection conn = DriverManager.getConnection(url);
 
- if (rows > 0) {
-    
-                result = "registration successful!";
-            } else {
-                result = "registration failed!";
-            }
-        }
-    } catch (ClassNotFoundException | SQLException e) {
+             PreparedStatement prep = conn.prepareStatement("select * from customer where username = ?");
+             prep.setString(1, fullname);
+             ResultSet rs = prep.executeQuery();
+             if (rs.next()) {
+                 result = "User already exists, please use another username!";
+             } else {
+                 PreparedStatement insertStmt = conn.prepareStatement("INSERT INTO customer (username, email, age, password) VALUES (?, ?, ?, ?)");
+                 insertStmt.setString(1, fullname);
+                 insertStmt.setString(2, email);
+                 insertStmt.setInt(3, age);
+                 insertStmt.setString(4, password);
+                 int rows = insertStmt.executeUpdate();
+                 if (rows > 0) {
+                     result = "Registration successful!";
+                 } else {
+                     result = "Registration failed!";
+                 }
+                 insertStmt.close();
+             }
+             rs.close();
+             prep.close();
+        } catch (SQLException e) {
+            System.err.println("D'oh! Got an exception!");
+            System.err.println(e.getMessage());
+            result = "Something went wrong";
+        
+    } catch (ClassNotFoundException e) {
         System.err.println("D'oh! Got an exception!");
         System.err.println(e.getMessage());
         result = "Something went wrong";
     }
     return result;
-
-
-    }
+}
 
 }//end class
