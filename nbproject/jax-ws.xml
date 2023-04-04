@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jax-ws xmlns="http://www.netbeans.org/ns/jax-ws/1">
   <services>
-    <service name="customer">
-      <implementation-class>customer.customer</implementation-class>
-    </service>
     <service name="admin">
       <implementation-class>admin.admin</implementation-class>
+    </service>
+    <service name="customer">
+      <implementation-class>customer.customer</implementation-class>
     </service>
   </services>
   <clients/>

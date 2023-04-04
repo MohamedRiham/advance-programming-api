@@ -204,6 +204,38 @@ result = "Invalid product name";
     return result;
 }
 
+@WebMethod(operationName = "viewOrders")
+public String viewOrders() {
+    String url = "jdbc:sqlserver://DESKTOP-37MVMA7\\SQLEXPRESS:1433; databaseName=details;  encrypt=true; trustServerCertificate=true; integratedSecurity=true";
+    Connection con = null;
+    Statement stmt = null;
+    ResultSet rs = null;
+    StringBuilder result = new StringBuilder();
+
+    try {
+        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        con = DriverManager.getConnection(url);
+        String query = "SELECT * FROM reservations ";
+        stmt = con.createStatement();
+        rs = stmt.executeQuery(query);
+        while (rs.next()) {
+            // Append each row of data to the result string
+            result.append("cname: ").append(rs.getString("cname")).append(", ")
+                  .append("pname: ").append(rs.getString("pname")).append(", ")
+                  .append("pprice: ").append(rs.getString("pprice")).append(", ")
+
+                  .append("pqty: ").append(rs.getString("pqty")).append("\n");
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    } finally {
+        try { if (rs != null) rs.close(); } catch (Exception e) { e.printStackTrace(); }
+        try { if (stmt != null) stmt.close(); } catch (Exception e) { e.printStackTrace(); }
+        try { if (con != null) con.close(); } catch (Exception e) { e.printStackTrace(); }
+    }
+    
+    return result.toString();
+}
     
 
 }//end class
